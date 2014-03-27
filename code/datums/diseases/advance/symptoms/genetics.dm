@@ -6,7 +6,7 @@ DNA Saboteur
 	Very noticable.
 	Lowers resistance tremendously.
 	No changes to stage speed.
-	Decreases transmittablity temrendously.
+	Decreases transmittablity tremendously.
 	Fatal Level.
 
 Bonus
@@ -68,7 +68,7 @@ Bonus
 	Cleans the DNA of a person and then randomly gives them a power..
 
 //////////////////////////////////////
-*/
+
 
 /datum/symptom/genetic_mutation/powers
 
@@ -79,3 +79,4 @@ Bonus
 	transmittable = -4
 	level = 6
 	good_mutations = 1
+*/
