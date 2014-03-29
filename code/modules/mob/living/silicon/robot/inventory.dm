@@ -186,6 +186,10 @@
 			deselect_module(get_selected_module()) //If we can't do select anything, at least deselect the current module.
 	return
 
+/mob/living/silicon/robot/swap_hand()
+	cycle_modules()
+	return
+
 //cycle_modules() - Cycles through the list of selected modules.
 /mob/living/silicon/robot/proc/cycle_modules()
 	var/slot_start = get_selected_module()

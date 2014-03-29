@@ -31,15 +31,10 @@
 
 
 /client/Northwest()
-	if(iscarbon(usr))
-		var/mob/living/carbon/C = usr
-		if(!C.get_active_hand())
-			usr << "\red You have nothing to drop in your hand."
-			return
-		drop_item()
-	else
-		usr << "\red This mob type cannot drop items."
-	return
+	if(!usr.get_active_hand())
+		usr << "\red You have nothing to drop in your hand."
+		return
+	usr.drop_item()
 
 //This gets called when you press the delete button.
 /client/verb/delete_key_pressed()
@@ -52,30 +47,21 @@
 
 /client/verb/swap_hand()
 	set hidden = 1
-	if(istype(mob, /mob/living/carbon))
-		mob:swap_hand()
-	if(istype(mob,/mob/living/silicon/robot))
-		var/mob/living/silicon/robot/R = mob
-		R.cycle_modules()
-	return
-
+	mob.swap_hand()
 
 
 /client/verb/attack_self()
 	set hidden = 1
 	if(mob)
 		mob.mode()
-	return
 
 
 /client/verb/toggle_throw_mode()
 	set hidden = 1
 	if(!istype(mob, /mob/living/carbon))
 		return
-	if (!mob.stat && isturf(mob.loc) && !mob.restrained())
+	if(!mob.stat && isturf(mob.loc) && !mob.restrained())
 		mob:toggle_throw_mode()
-	else
-		return
 
 
 /client/verb/drop_item()

@@ -802,3 +802,6 @@ var/list/slot_equipment_priority = list( \
 	resting = max(resting + amount,0)
 	update_canmove()
 	return
+
+/mob/proc/swap_hand()
+	return
