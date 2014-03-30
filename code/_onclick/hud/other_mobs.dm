@@ -88,5 +88,9 @@
 		using.layer = 19
 		adding += using
 
+		mymob.zone_sel = new /obj/screen/zone_sel()
+		mymob.zone_sel.icon = ui_style
+		mymob.zone_sel.update_icon()
+
 		mymob.client.screen = null
 		mymob.client.screen += adding

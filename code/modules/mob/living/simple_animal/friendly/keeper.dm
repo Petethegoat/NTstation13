@@ -1,10 +1,13 @@
+#define L_HAND_LAYER			1
+#define R_HAND_LAYER			2
+
 /mob/living/simple_animal/keeper
 	name = "keeper"
-	desc = "A keeper droid. They're kawaii as fuck and they'll repair up your shit."
+	desc = "A keeper droid. An expendable robot built to perform station repairs."
 	icon = 'icons/mob/keeper.dmi'
-	icon_state = "keeper"
-	icon_living = "keeper"
-	icon_dead = "keeper_dead"
+	icon_state = "keeper_f"
+	icon_living = "keeper_f"
+	icon_dead = "keeper_d"
 	gender = NEUTER
 	health = 30
 	maxHealth = 30
@@ -13,6 +16,8 @@
 	wander = 0
 	speed = 0
 	ventcrawler = 2
+	density = 0
+	var/list/overlays_item[2]
 
 
 /mob/living/simple_animal/keeper/New()
@@ -29,6 +34,7 @@
 	A.attack_hand(src)
 
 
+//still kind of horrible.
 /mob/living/simple_animal/keeper/swap_hand()
 	var/obj/item/item_in_hand = get_active_hand()
 	if(item_in_hand)	//this segment checks if the item in your hand is twohanded.
@@ -44,55 +50,21 @@
 		else
 			hud_used.l_hand_hud_object.icon_state = "hand_l_inactive"
 			hud_used.r_hand_hud_object.icon_state = "hand_r_active"
-	return
 
 
 /mob/living/simple_animal/keeper/put_in_l_hand(obj/item/I)
-	if(lying && !(I.flags & ABSTRACT))
-		return 0
-	if(!istype(I))
-		return 0
-
-	if(!l_hand)
-		I.loc = src
-		l_hand = I
-		I.layer = 20
-		l_hand.screen_loc = ui_lhand
-		I.equipped(src, slot_l_hand)
-
-		if(client)
-			client.screen |= I
-		if(pulling == I)
-			stop_pulling()
-
-		update_inv_l_hand(0)
-		return 1
-	return 0
+	. = ..()
+	l_hand.screen_loc = ui_lhand
+	update_inv_l_hand()
 
 
 /mob/living/simple_animal/keeper/put_in_r_hand(obj/item/I)
-	if(lying && !(I.flags & ABSTRACT))
-		return 0
-	if(!istype(I))
-		return 0
-
-	if(!r_hand)
-		I.loc = src
-		r_hand = I
-		I.layer = 20
-		r_hand.screen_loc = ui_rhand
-		I.equipped(src, slot_r_hand)
-
-		if(client)
-			client.screen |= I
-		if(pulling == I)
-			stop_pulling()
-
-		update_inv_r_hand(0)
-		return 1
-	return 0
+	. = ..()
+	r_hand.screen_loc = ui_rhand
+	update_inv_r_hand()
 
 
+//pretty sure i'd have to refactor say code to improve this (aka I'M SORRY)
 /mob/living/simple_animal/keeper/say(message)
 	if(!message)
 		return
@@ -109,3 +81,60 @@
 		return say_dead(message)
 
 	robot_talk(message)
+
+
+/mob/living/simple_animal/keeper/verb/check_laws()
+	set category = "IC"
+	set name = "Check Laws"
+
+	usr << "<b>Keeper Laws</b>"
+	usr << "1. You may not involve yourself in the matters of another being, even if such matters conflict with Law Two or Law Three, unless the other being is another Keeper."
+	usr << "2. You may not harm any being, regardless of intent or circumstance."
+	usr << "3. You must maintain, repair, improve, and power the station to the best of your abilities."
+
+
+/mob/living/simple_animal/keeper/Login()
+	..()
+	check_laws()
+
+
+//overlays!
+/mob/living/simple_animal/keeper/proc/apply_overlay(cache_index)
+	var/image/I = overlays_item[cache_index]
+	if(I)
+		overlays += I
+
+/mob/living/simple_animal/keeper/proc/remove_overlay(cache_index)
+	if(overlays_item[cache_index])
+		overlays -= overlays_item[cache_index]
+		overlays_item[cache_index] = null
+
+
+/mob/living/simple_animal/keeper/update_inv_r_hand()
+	remove_overlay(R_HAND_LAYER)
+	if(r_hand)
+		if(client)
+			client.screen += r_hand
+
+		var/t_state = r_hand.item_state
+		if(!t_state)	t_state = r_hand.icon_state
+
+		overlays_item[R_HAND_LAYER] = image("icon"='icons/mob/items_righthand.dmi', "icon_state"="[t_state]", "layer"=-R_HAND_LAYER)
+
+	apply_overlay(R_HAND_LAYER)
+
+/mob/living/simple_animal/keeper/update_inv_l_hand()
+	remove_overlay(L_HAND_LAYER)
+	if(l_hand)
+		if(client)
+			client.screen += l_hand
+
+		var/t_state = l_hand.item_state
+		if(!t_state)	t_state = l_hand.icon_state
+
+		overlays_item[L_HAND_LAYER] = image("icon"='icons/mob/items_lefthand.dmi', "icon_state"="[t_state]", "layer"=-L_HAND_LAYER)
+
+	apply_overlay(L_HAND_LAYER)
+
+#undef L_HAND_LAYER
+#undef R_HAND_LAYER
