@@ -62,8 +62,8 @@
 					M.drop_item()
 					return
 
-		if (!user.IsAdvancedToolUser())
-			user << "<span class='notice'>You don't have the dexterity to do this!</span>"
+		if(!user.IsAdvancedToolUser())
+			user << "<span class='warning'>You don't have the dexterity to do this!</span>"
 			return
 
 		if(trigger_guard)

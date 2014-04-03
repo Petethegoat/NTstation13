@@ -11,13 +11,23 @@
 	gender = NEUTER
 	health = 30
 	maxHealth = 30
-	universal_speak = 0
+	heat_damage_per_tick = 0
+	cold_damage_per_tick = 0
+	unsuitable_atoms_damage = 0
+	universal_speak = 1	//They can understand everyone, but can only talk on binary chat.
 	robot_talk_understand = 1
 	wander = 0
 	speed = 0
 	ventcrawler = 2
 	density = 0
+	pass_flags = PASSTABLE
+	sight = (SEE_TURFS | SEE_OBJS)
+
 	var/list/overlays_item[2]
+	var/laws = \
+{"1. You may not involve yourself in the matters of another being, even if such matters conflict with Law Two or Law Three, unless the other being is another Keeper.
+2. You may not harm any being, regardless of intent or circumstance.
+3. You must maintain, repair, improve, and power the station to the best of your abilities."}
 
 
 /mob/living/simple_animal/keeper/New()
@@ -28,6 +38,29 @@
 	access_card = new /obj/item/weapon/card/id(src)
 	var/datum/job/captain/C = new/datum/job/captain
 	access_card.access = C.get_access()
+
+
+/mob/living/simple_animal/keeper/attack_hand(mob/user)
+	if(istype(user, /mob/living/simple_animal/keeper))
+		if(stat == DEAD)	//cannibalism! kawaii uguu~
+			var/mob/living/simple_animal/keeper/K = user
+			if(K.health < K.maxHealth)
+				K.visible_message("<span class='notice'>[K] begins to cannibalize parts from [src].</span>")
+				if(do_after(K, 60, 5, 0))
+					K.visible_message("<span class='notice'>[K] repairs itself with the extra parts!</span>")
+					K.adjustBruteLoss(K.health - K.maxHealth)
+					del(src)
+			else
+				user << "<span class='notice'>You're already in perfect condition!</span>"
+		else
+			user << "<span class='notice'>You can't use [src] to repair yourself while [src] is still active!</span>"
+		return
+
+	..()
+
+
+/mob/living/simple_animal/keeper/IsAdvancedToolUser()
+	return 1
 
 
 /mob/living/simple_animal/keeper/UnarmedAttack(atom/A, proximity)
@@ -88,9 +121,7 @@
 	set name = "Check Laws"
 
 	usr << "<b>Keeper Laws</b>"
-	usr << "1. You may not involve yourself in the matters of another being, even if such matters conflict with Law Two or Law Three, unless the other being is another Keeper."
-	usr << "2. You may not harm any being, regardless of intent or circumstance."
-	usr << "3. You must maintain, repair, improve, and power the station to the best of your abilities."
+	usr << laws
 
 
 /mob/living/simple_animal/keeper/Login()
@@ -113,9 +144,6 @@
 /mob/living/simple_animal/keeper/update_inv_r_hand()
 	remove_overlay(R_HAND_LAYER)
 	if(r_hand)
-		if(client)
-			client.screen += r_hand
-
 		var/t_state = r_hand.item_state
 		if(!t_state)	t_state = r_hand.icon_state
 
@@ -126,9 +154,6 @@
 /mob/living/simple_animal/keeper/update_inv_l_hand()
 	remove_overlay(L_HAND_LAYER)
 	if(l_hand)
-		if(client)
-			client.screen += l_hand
-
 		var/t_state = l_hand.item_state
 		if(!t_state)	t_state = l_hand.icon_state
 

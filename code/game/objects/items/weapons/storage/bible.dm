@@ -39,8 +39,8 @@
 
 	add_logs(user, M, "attacked", object="[src.name]")
 
-	if (!(istype(user, /mob/living/carbon/human) || ticker) && ticker.mode.name != "monkey")
-		user << "\red You don't have the dexterity to do this!"
+	if(!user.IsAdvancedToolUser())
+		user << "<span class='warning'>You don't have the dexterity to do this!</span>"
 		return
 	if(!chaplain)
 		user << "\red The book sizzles in your hands."

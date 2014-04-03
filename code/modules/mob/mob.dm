@@ -710,7 +710,7 @@ var/list/slot_equipment_priority = list( \
 	return 1
 
 
-/mob/proc/IsAdvancedToolUser()//This might need a rename but it should replace the can this mob use things check
+/mob/proc/IsAdvancedToolUser()	//This might need a rename but it should replace the can this mob use things check
 	return 0
 
 /mob/proc/Jitter(amount)

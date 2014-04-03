@@ -53,7 +53,7 @@
 	if(!user || !src)	return 0
 	if(!istype(user.loc,/turf)) return 0
 	if(!user.IsAdvancedToolUser())
-		user << "\red You don't have the dexterity to do this!"
+		user << "<span class='warning'>You don't have the dexterity to do this!</span>"
 		return 0
 	var/title = "Sheet-[src]"
 	title += " ([src.amount] sheet\s left)"
@@ -141,7 +141,7 @@
 	if(!user || !src)	return 0
 	if(!istype(user.loc,/turf)) return 0
 	if(!user.IsAdvancedToolUser())
-		user << "\red You don't have the dexterity to do this!"
+		user << "<span class='warning'>You don't have the dexterity to do this!</span>"
 		return 0
 	var/title = "Sheet-[src]"
 	title += " ([src.amount] sheet\s left)"

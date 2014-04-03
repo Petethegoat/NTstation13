@@ -44,10 +44,18 @@
 		using.name = "drop"
 		using.icon = ui_style
 		using.icon_state = "act_drop"
-		using.screen_loc = ui_drop_throw
+		using.screen_loc = ui_storage1
 		using.layer = 19
 		adding += using
-
+/*
+		using = new /obj/screen()
+		using.name = "storage"
+		using.icon = ui_style
+		using.icon_state = "back"
+		using.screen_loc = ui_back
+		using.layer = 19
+		adding += using
+*/
 		inv_box = new /obj/screen/inventory()
 		inv_box.name = "r_hand"
 		inv_box.icon = ui_style
@@ -75,7 +83,7 @@
 		using = new /obj/screen/inventory()
 		using.name = "hand"
 		using.icon = ui_style
-		using.icon_state = "swap_1"
+		using.icon_state = "swap_1_m"
 		using.screen_loc = ui_swaphand1
 		using.layer = 19
 		adding += using
