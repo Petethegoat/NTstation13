@@ -5,9 +5,9 @@
 	name = "keeper"
 	desc = "A keeper droid. An expendable robot built to perform station repairs."
 	icon = 'icons/mob/keeper.dmi'
-	icon_state = "keeper_f"
-	icon_living = "keeper_f"
-	icon_dead = "keeper_d"
+	icon_state = "keeper_grey"
+	icon_living = "keeper_grey"
+	icon_dead = "keeper_dead"
 	gender = NEUTER
 	health = 30
 	maxHealth = 30
@@ -22,6 +22,7 @@
 	density = 0
 	pass_flags = PASSTABLE
 	sight = (SEE_TURFS | SEE_OBJS)
+	var/picked = FALSE
 
 	var/list/overlays_item[2]
 	var/laws = \
@@ -49,7 +50,7 @@
 				if(do_after(K, 60, 5, 0))
 					K.visible_message("<span class='notice'>[K] repairs itself with the extra parts!</span>")
 					K.adjustBruteLoss(K.health - K.maxHealth)
-					del(src)
+					gib()
 			else
 				user << "<span class='notice'>You're already in perfect condition!</span>"
 		else
@@ -128,6 +129,15 @@
 	..()
 	check_laws()
 
+	if(!picked)
+		pick_colour()
+
+
+/mob/living/simple_animal/keeper/Die()
+	..()
+	drop_l_hand()
+	drop_r_hand()
+
 
 //overlays!
 /mob/living/simple_animal/keeper/proc/apply_overlay(cache_index)
@@ -161,5 +171,23 @@
 
 	apply_overlay(L_HAND_LAYER)
 
+
+/mob/living/simple_animal/keeper/proc/pick_colour()
+	var/colour = input("Choose your colour!", "Colour", "grey") in list("grey", "blue", "red", "green", "pink", "orange")
+	icon_state = "keeper_[colour]"
+	icon_living = "keeper_[colour]"
+	picked = TRUE
+
 #undef L_HAND_LAYER
 #undef R_HAND_LAYER
+
+/obj/item/keeper_shell
+	name = "keeper shell"
+	desc = "A keeper droid shell. An expendable robot built to perform station repairs."
+	icon = 'icons/mob/keeper.dmi'
+	icon_state = "keeper_item"
+
+/obj/item/keeper_shell/attack_ghost(mob/user)
+	var/mob/living/simple_animal/keeper/K = new(get_turf(loc))
+	K.key = user.key	//no messing around with mind or anything, just stick them in the mob.
+	qdel(src)
