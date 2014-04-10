@@ -139,6 +139,13 @@
 	drop_r_hand()
 
 
+/mob/living/simple_animal/keeper/proc/pick_colour()
+	var/colour = input("Choose your colour!", "Colour", "grey") in list("grey", "blue", "red", "green", "pink", "orange")
+	icon_state = "keeper_[colour]"
+	icon_living = "keeper_[colour]"
+	picked = TRUE
+
+
 //overlays!
 /mob/living/simple_animal/keeper/proc/apply_overlay(cache_index)
 	var/image/I = overlays_item[cache_index]
@@ -172,12 +179,6 @@
 	apply_overlay(L_HAND_LAYER)
 
 
-/mob/living/simple_animal/keeper/proc/pick_colour()
-	var/colour = input("Choose your colour!", "Colour", "grey") in list("grey", "blue", "red", "green", "pink", "orange")
-	icon_state = "keeper_[colour]"
-	icon_living = "keeper_[colour]"
-	picked = TRUE
-
 #undef L_HAND_LAYER
 #undef R_HAND_LAYER
 
@@ -188,6 +189,9 @@
 	icon_state = "keeper_item"
 
 /obj/item/keeper_shell/attack_ghost(mob/user)
+	if(jobban_isbanned(user, "pAI"))
+		return
+
 	var/mob/living/simple_animal/keeper/K = new(get_turf(loc))
 	K.key = user.key	//no messing around with mind or anything, just stick them in the mob.
 	qdel(src)
